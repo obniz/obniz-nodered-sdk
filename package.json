@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/obniz/obniz-nodered-sdk#readme",
   "dependencies": {
-    "obniz": "^3.9.0"
+    "obniz": "^3.27.0"
   },
   "keywords": [
     "node-red",
