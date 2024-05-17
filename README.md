@@ -46,6 +46,23 @@ It is used when you want to get data periodically, for example for sensing.
 You can use it to create output via obniz, such as obniz.display.
 You can also output the information obtained through obniz.
 
+
+- obniz connect node
+
+
+![](./img/obniz-connect.png)
+
+Used when you want to control the connection to obniz independently of starting/stopping node-red.
+When input is received, node-red connects to obniz.
+If the connection succeeds, the output is number 1, and if the connection fails, the output is number 2.
+
+- obniz close node
+
+
+![](./img/obniz-close.png)
+
+Used when you want to control the connection to obniz independently of starting/stopping node-red.
+If it can be successfully closed, the output is sent to the next node.
 ## How to use 
 
 ### Common.
