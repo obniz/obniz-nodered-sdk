@@ -8,6 +8,7 @@
       deviceType: {value: "obnizboard", required: true},
       name: {value: ""},
       accessToken: {value: ""},
+      autoConnectOnDeploy: {value: true},
       code: {value: ""}
     },
     // inputs: 1,
@@ -55,6 +56,9 @@
       });
       tabs.activateTab("func-tab-init");
 
+      $("#node-input-autoConnectOnDeploy").typedInput({
+        type:'bool'
+      })
     },
     oneditsave: function () {
       this.code = this.editor.getValue();
@@ -73,6 +77,7 @@
       this.editor.destroy();
       delete this.editor;
     },
+
   });
 
   function pad(num, size) {
@@ -108,7 +113,10 @@
         </select>
     </div>
 
-
+    <div class="form-row">
+        <label for="node-config-input-autoConnectOnDeploy"><i class="fa fa-tag"></i> Auto connect on deploy</label>
+        <input type="checkbox" id="node-config-input-autoConnectOnDeploy" placeholder="">
+    </div>
 
     <div class="form-row">
         <ul style="min-width: 600px; margin-bottom: 20px;" id="func-tabs"></ul>

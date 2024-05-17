@@ -44,6 +44,26 @@ obnizノードには２つのノードがあります。
 obniz.displayなどobnizを通じて出力をしたい場合などに使います。
 出力も備えていますので、obnizを通じて得た情報を出力することもできます。
 
+
+
+- obniz connectノード
+
+
+![](./img/obniz-connect.png)
+
+node-redの起動/停止とは別にobnizへの接続を制御したいときに使います。
+inputがはいるとがはいるとobnizに接続します。
+接続に成功すると出力の1番、接続に失敗すると2番に出力します。
+
+- obniz close ノード
+
+
+![](./img/obniz-close.png)
+
+node-redの起動/停止とは別にobnizへの接続を制御したいときに使います。
+正常にcloseできると次のノードへ出力します。
+
+
 ## 使い方
 
 ### 共通

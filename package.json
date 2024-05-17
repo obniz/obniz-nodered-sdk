@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-obniz",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Obniz node to send json data to obniz cloud. Obniz is electronics as a service and you can use electronics with json APIs. ",
   "main": "obniz.js",
   "scripts": {
@@ -27,7 +27,9 @@
     "nodes": {
       "obniz": "obniz.js",
       "obniz-repeat": "obniz-repeat.js",
-      "obniz-function": "obniz-function.js"
+      "obniz-function": "obniz-function.js",
+      "obniz-connect": "obniz-connect.js",
+      "obniz-close": "obniz-close.js"
     }
   }
 }
