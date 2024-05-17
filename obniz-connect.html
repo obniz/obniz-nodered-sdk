@@ -1,0 +1,52 @@
+<script type="text/javascript">
+
+  RED.nodes.registerType('obniz-connect', {
+    category: 'advanced',
+    color: '#00afd5',
+    defaults: {
+      obniz: {value: "", type:"obniz", required:true},
+      name: {value: ""},
+      timeout: {value: 60, required:true},
+    },
+    inputs: 1,
+    outputs: 2,
+    icon: "function.png",
+    align: "left",
+    label: function () {
+      return (this.name || "obniz connect") ;
+    },
+    oneditprepare: function () {
+      $("#node-input-timeout").typedInput({
+        type:'num'
+      })
+    }
+
+  });
+
+</script>
+
+
+<script type="text/x-red" data-template-name="obniz-connect">
+
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> name</label>
+        <input type="text" id="node-input-name" placeholder="name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-obniz"><i class="fa fa-tag"></i> obniz</label>
+        <input type="text" id="node-input-obniz" placeholder="obniz">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-timeout"><i class="fa fa-tag"></i> timeout</label>
+        <input type="number" id="node-input-timeout" placeholder="60">
+    </div>
+
+
+</script>
+
+<script type="text/x-red" data-help-name="obniz-connect">
+    <p>obnizに接続する</p>
+</script>
+
