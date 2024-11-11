@@ -16,6 +16,7 @@ module.exports = function(RED) {
     this.deviceType = n.deviceType;
     this.autoConnectOnDeploy = n.autoConnectOnDeploy;
     this.events = new EventEmitter();
+    this.events.setMaxListeners(0);
     this.currentStatus = {};
     this.connected = false;
     this.context = vm.createContext({});
