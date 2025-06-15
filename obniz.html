@@ -38,13 +38,13 @@
         } else if (!/^[0-9]{4}-?[0-9]{4}$/.test(obnizId)) {
           errorMessages.push("・" + node._("obniz.validation.obnizIdFormat"));
         } else {
-          // 重複チェック
+          // Duplicate check
           try {
-            const normalizedObnizId = obnizId.replace(/[^0-9]/g, ''); // 数字以外を除去
+            const normalizedObnizId = obnizId.replace(/[^0-9]/g, ''); // Remove non-numeric characters
             let isDuplicate = false;
             const existingNodes = [];
             
-            // 設定ノードを取得
+            // Get existing config nodes
             RED.nodes.eachConfig(function(configNode) {
               if (configNode.type === 'obniz') {
                 existingNodes.push(configNode);
@@ -56,7 +56,7 @@
               const existingObnizId = existingNode.obnizId || '';
               const existingNormalizedId = existingObnizId.replace(/[^0-9]/g, '');
               
-              // 自分自身は除外（編集時のみ）
+              // Exclude self (edit mode only)
               if (existingNode.id !== node.id) {
                 if (existingNormalizedId === normalizedObnizId && normalizedObnizId !== '') {
                   isDuplicate = true;
@@ -69,7 +69,7 @@
               errorMessages.push("・" + node._("obniz.validation.obnizIdDuplicate"));
             }
           } catch (e) {
-            console.log("重複チェック中にエラーが発生しました:", e);
+            console.log("Error during duplicate check:", e);
           }
         }
 
@@ -93,7 +93,7 @@
 
 
         if (errorMessages.length > 0) {
-          // 複数のセレクタを試す
+          // Try multiple selectors
           $("#node-config-dialog-ok").prop("disabled", true);
           $(".red-ui-tray-footer .red-ui-button.primary").prop("disabled", true);
           $("button:contains('追加')").prop("disabled", true);
@@ -109,7 +109,7 @@
         }
       }
 
-      // リアルタイムバリデーション
+      // Real-time validation
       $("#node-config-input-name, #node-config-input-obnizId, #node-config-input-accessToken, #node-config-input-deviceType")
         .on('keyup input change', validate);
 
@@ -154,7 +154,7 @@
         type:'bool'
       });
 
-      // 初期バリデーション実行
+      // Execute initial validation
       validate();
     },
     oneditsave: function () {
