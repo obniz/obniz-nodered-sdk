@@ -30,13 +30,13 @@
         // obnizId validation
         const obnizId = $("#node-config-input-obnizId").val();
         if (obnizId === "") {
-          errorMessages.push("・obniz ID は必須です。");
+          errorMessages.push("・" + node._("obniz.validation.obnizIdRequired"));
         } else if (hasWhitespace.test(obnizId)) {
-          errorMessages.push("・obniz ID にスペースや改行は含められません。");
+          errorMessages.push("・" + node._("obniz.validation.obnizIdNoWhitespace"));
         } else if (hasFullWidth.test(obnizId)) {
-          errorMessages.push("・obniz ID に全角文字は含められません。");
+          errorMessages.push("・" + node._("obniz.validation.obnizIdNoFullWidth"));
         } else if (!/^[0-9]{4}-?[0-9]{4}$/.test(obnizId)) {
-          errorMessages.push("・obniz ID は4桁-4桁の形式で入力してください（例: 1234-5678）。");
+          errorMessages.push("・" + node._("obniz.validation.obnizIdFormat"));
         } else {
           // 重複チェック
           try {
@@ -66,7 +66,7 @@
             }
             
             if (isDuplicate) {
-              errorMessages.push("・この obniz ID は既に使用されています。別のIDを入力してください。");
+              errorMessages.push("・" + node._("obniz.validation.obnizIdDuplicate"));
             }
           } catch (e) {
             console.log("重複チェック中にエラーが発生しました:", e);
@@ -77,18 +77,18 @@
         const accessToken = $("#node-config-input-accessToken").val();
         if (accessToken !== "") {
           if (hasWhitespace.test(accessToken)) {
-            errorMessages.push("・アクセストークンにスペースや改行は含められません。");
+            errorMessages.push("・" + node._("obniz.validation.accessTokenNoWhitespace"));
           } else if (hasFullWidth.test(accessToken)) {
-            errorMessages.push("・アクセストークンに全角文字は含められません。");
+            errorMessages.push("・" + node._("obniz.validation.accessTokenNoFullWidth"));
           } else if (accessToken.length < 10) {
-            errorMessages.push("・アクセストークンが短すぎます。正しい値を入力してください。");
+            errorMessages.push("・" + node._("obniz.validation.accessTokenTooShort"));
           }
         }
 
         // name validation
         const name = $("#node-config-input-name").val();
         if (name === "") {
-          errorMessages.push("・名前を入力してください。");
+          errorMessages.push("・" + node._("obniz.validation.nameRequired"));
         }
 
 
