@@ -4,8 +4,8 @@
     category: 'config',
     color: '#00afd5',
     defaults: {
-      obnizId: {value: "", required: true, validate:RED.validators.regex(/^[0-9]{4}-?[0-9]{4}$/)},
-      deviceType: {value: "obnizboard", required: true},
+      obnizId: {value: ""},
+      deviceType: {value: "obnizboard"},
       name: {value: ""},
       accessToken: {value: ""},
       autoConnectOnDeploy: {value: true},
@@ -19,6 +19,72 @@
       return (this.name || "obniz") + "(" + this.obnizId + ")";
     },
     oneditprepare: function () {
+      const node = this;
+      const validationTip = $("#node-config-validation-tip");
+
+      function validate() {
+        let errorMessages = [];
+        const hasWhitespace = /\s/;
+        const hasFullWidth = /[^\x00-\x7F]/;
+
+        // obnizId validation
+        const obnizId = $("#node-config-input-obnizId").val();
+        if (obnizId === "") {
+          errorMessages.push("・obniz ID は必須です。");
+        } else if (hasWhitespace.test(obnizId)) {
+          errorMessages.push("・obniz ID にスペースや改行は含められません。");
+        } else if (hasFullWidth.test(obnizId)) {
+          errorMessages.push("・obniz ID に全角文字は含められません。");
+        } else if (!/^[0-9]{4}-?[0-9]{4}$/.test(obnizId)) {
+          errorMessages.push("・obniz ID は4桁-4桁の形式で入力してください（例: 1234-5678）。");
+        } else {
+          // 重複チェック
+          const existingNodes = RED.nodes.getType('obniz');
+          const normalizedObnizId = obnizId.replace('-', '');
+          for (let i = 0; i < existingNodes.length; i++) {
+            const existingNode = existingNodes[i];
+            if (existingNode.id !== node.id) { // 自分自身は除外
+              const existingObnizId = existingNode.obnizId ? existingNode.obnizId.replace('-', '') : '';
+              if (existingObnizId === normalizedObnizId) {
+                errorMessages.push("・この obniz ID は既に使用されています。別のIDを入力してください。");
+                break;
+              }
+            }
+          }
+        }
+
+        // accessToken validation
+        const accessToken = $("#node-config-input-accessToken").val();
+        if (accessToken !== "") {
+          if (hasWhitespace.test(accessToken)) {
+            errorMessages.push("・アクセストークンにスペースや改行は含められません。");
+          } else if (hasFullWidth.test(accessToken)) {
+            errorMessages.push("・アクセストークンに全角文字は含められません。");
+          } else if (accessToken.length < 10) {
+            errorMessages.push("・アクセストークンが短すぎます。正しい値を入力してください。");
+          }
+        }
+
+        // name validation
+        const name = $("#node-config-input-name").val();
+        if (name === "") {
+          errorMessages.push("・名前を入力してください。");
+        }
+
+        if (errorMessages.length > 0) {
+          $("#node-config-dialog-ok").prop("disabled", true);
+          validationTip.html(errorMessages.join('<br/>'));
+          validationTip.show();
+        } else {
+          $("#node-config-dialog-ok").prop("disabled", false);
+          validationTip.hide();
+        }
+      }
+
+      // リアルタイムバリデーション
+      $("#node-config-input-name, #node-config-input-obnizId, #node-config-input-accessToken, #node-config-input-deviceType")
+        .on('keyup input change', validate);
+
       this.editor = RED.editor.createEditor({
         id: 'node-input-code-editor',
         mode: 'ace/mode/nrjavascript',
@@ -58,7 +124,10 @@
 
       $("#node-input-autoConnectOnDeploy").typedInput({
         type:'bool'
-      })
+      });
+
+      // 初期バリデーション実行
+      validate();
     },
     oneditsave: function () {
       this.code = this.editor.getValue();
@@ -116,6 +185,10 @@
     <div class="form-row">
         <label for="node-config-input-autoConnectOnDeploy"><i class="fa fa-tag"></i> Auto connect on deploy</label>
         <input type="checkbox" id="node-config-input-autoConnectOnDeploy" placeholder="">
+    </div>
+
+    <div class="form-row">
+        <div id="node-config-validation-tip" class="form-tips" style="display: none; color: #a94442; padding-top: 5px;"></div>
     </div>
 
     <div class="form-row">
