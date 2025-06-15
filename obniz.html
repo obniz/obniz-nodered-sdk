@@ -39,17 +39,37 @@
           errorMessages.push("・obniz ID は4桁-4桁の形式で入力してください（例: 1234-5678）。");
         } else {
           // 重複チェック
-          const existingNodes = RED.nodes.getType('obniz');
-          const normalizedObnizId = obnizId.replace('-', '');
-          for (let i = 0; i < existingNodes.length; i++) {
-            const existingNode = existingNodes[i];
-            if (existingNode.id !== node.id) { // 自分自身は除外
-              const existingObnizId = existingNode.obnizId ? existingNode.obnizId.replace('-', '') : '';
-              if (existingObnizId === normalizedObnizId) {
-                errorMessages.push("・この obniz ID は既に使用されています。別のIDを入力してください。");
-                break;
+          try {
+            const normalizedObnizId = obnizId.replace(/[^0-9]/g, ''); // 数字以外を除去
+            let isDuplicate = false;
+            const existingNodes = [];
+            
+            // 設定ノードを取得
+            RED.nodes.eachConfig(function(configNode) {
+              if (configNode.type === 'obniz') {
+                existingNodes.push(configNode);
+              }
+            });
+            
+            for (let i = 0; i < existingNodes.length; i++) {
+              const existingNode = existingNodes[i];
+              const existingObnizId = existingNode.obnizId || '';
+              const existingNormalizedId = existingObnizId.replace(/[^0-9]/g, '');
+              
+              // 自分自身は除外（編集時のみ）
+              if (existingNode.id !== node.id) {
+                if (existingNormalizedId === normalizedObnizId && normalizedObnizId !== '') {
+                  isDuplicate = true;
+                  break;
+                }
               }
             }
+            
+            if (isDuplicate) {
+              errorMessages.push("・この obniz ID は既に使用されています。別のIDを入力してください。");
+            }
+          } catch (e) {
+            console.log("重複チェック中にエラーが発生しました:", e);
           }
         }
 
@@ -71,12 +91,20 @@
           errorMessages.push("・名前を入力してください。");
         }
 
+
         if (errorMessages.length > 0) {
+          // 複数のセレクタを試す
           $("#node-config-dialog-ok").prop("disabled", true);
+          $(".red-ui-tray-footer .red-ui-button.primary").prop("disabled", true);
+          $("button:contains('追加')").prop("disabled", true);
+          $("button:contains('完了')").prop("disabled", true);
           validationTip.html(errorMessages.join('<br/>'));
           validationTip.show();
         } else {
           $("#node-config-dialog-ok").prop("disabled", false);
+          $(".red-ui-tray-footer .red-ui-button.primary").prop("disabled", false);
+          $("button:contains('追加')").prop("disabled", false);
+          $("button:contains('完了')").prop("disabled", false);
           validationTip.hide();
         }
       }
