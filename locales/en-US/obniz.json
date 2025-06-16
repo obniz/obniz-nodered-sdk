@@ -5,6 +5,17 @@
             "initialize": "Setup",
             "finalize": "Close",
             "outputs": "Outputs"
+        },
+        "validation": {
+            "obnizIdRequired": "obniz ID is required.",
+            "obnizIdNoWhitespace": "obniz ID cannot contain spaces or newlines.",
+            "obnizIdNoFullWidth": "obniz ID cannot contain full-width characters.",
+            "obnizIdFormat": "obniz ID must be in 4-digit-4-digit format (e.g., 1234-5678).",
+            "obnizIdDuplicate": "This obniz ID is already in use. Please enter a different ID.",
+            "accessTokenNoWhitespace": "Access token cannot contain spaces or newlines.",
+            "accessTokenNoFullWidth": "Access token cannot contain full-width characters.",
+            "accessTokenTooShort": "Access token is too short. Please enter a valid value.",
+            "nameRequired": "Name is required."
         }
     }
 }

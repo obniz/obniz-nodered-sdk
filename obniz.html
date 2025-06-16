@@ -4,8 +4,8 @@
     category: 'config',
     color: '#00afd5',
     defaults: {
-      obnizId: {value: "", required: true, validate:RED.validators.regex(/^[0-9]{4}-?[0-9]{4}$/)},
-      deviceType: {value: "obnizboard", required: true},
+      obnizId: {value: ""},
+      deviceType: {value: "obnizboard"},
       name: {value: ""},
       accessToken: {value: ""},
       autoConnectOnDeploy: {value: true},
@@ -19,6 +19,100 @@
       return (this.name || "obniz") + "(" + this.obnizId + ")";
     },
     oneditprepare: function () {
+      const node = this;
+      const validationTip = $("#node-config-validation-tip");
+
+      function validate() {
+        let errorMessages = [];
+        const hasWhitespace = /\s/;
+        const hasFullWidth = /[^\x00-\x7F]/;
+
+        // obnizId validation
+        const obnizId = $("#node-config-input-obnizId").val();
+        if (obnizId === "") {
+          errorMessages.push("・" + node._("obniz.validation.obnizIdRequired"));
+        } else if (hasWhitespace.test(obnizId)) {
+          errorMessages.push("・" + node._("obniz.validation.obnizIdNoWhitespace"));
+        } else if (hasFullWidth.test(obnizId)) {
+          errorMessages.push("・" + node._("obniz.validation.obnizIdNoFullWidth"));
+        } else if (!/^[0-9]{4}-?[0-9]{4}$/.test(obnizId)) {
+          errorMessages.push("・" + node._("obniz.validation.obnizIdFormat"));
+        } else {
+          // Duplicate check
+          try {
+            const normalizedObnizId = obnizId.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            let isDuplicate = false;
+            const existingNodes = [];
+            
+            // Get existing config nodes
+            RED.nodes.eachConfig(function(configNode) {
+              if (configNode.type === 'obniz') {
+                existingNodes.push(configNode);
+              }
+            });
+            
+            for (let i = 0; i < existingNodes.length; i++) {
+              const existingNode = existingNodes[i];
+              const existingObnizId = existingNode.obnizId || '';
+              const existingNormalizedId = existingObnizId.replace(/[^0-9]/g, '');
+              
+              // Exclude self (edit mode only)
+              if (existingNode.id !== node.id) {
+                if (existingNormalizedId === normalizedObnizId && normalizedObnizId !== '') {
+                  isDuplicate = true;
+                  break;
+                }
+              }
+            }
+            
+            if (isDuplicate) {
+              errorMessages.push("・" + node._("obniz.validation.obnizIdDuplicate"));
+            }
+          } catch (e) {
+            console.log("Error during duplicate check:", e);
+          }
+        }
+
+        // accessToken validation
+        const accessToken = $("#node-config-input-accessToken").val();
+        if (accessToken !== "") {
+          if (hasWhitespace.test(accessToken)) {
+            errorMessages.push("・" + node._("obniz.validation.accessTokenNoWhitespace"));
+          } else if (hasFullWidth.test(accessToken)) {
+            errorMessages.push("・" + node._("obniz.validation.accessTokenNoFullWidth"));
+          } else if (accessToken.length < 10) {
+            errorMessages.push("・" + node._("obniz.validation.accessTokenTooShort"));
+          }
+        }
+
+        // name validation
+        const name = $("#node-config-input-name").val();
+        if (name === "") {
+          errorMessages.push("・" + node._("obniz.validation.nameRequired"));
+        }
+
+
+        if (errorMessages.length > 0) {
+          // Try multiple selectors
+          $("#node-config-dialog-ok").prop("disabled", true);
+          $(".red-ui-tray-footer .red-ui-button.primary").prop("disabled", true);
+          $("button:contains('追加')").prop("disabled", true);
+          $("button:contains('完了')").prop("disabled", true);
+          validationTip.html(errorMessages.join('<br/>'));
+          validationTip.show();
+        } else {
+          $("#node-config-dialog-ok").prop("disabled", false);
+          $(".red-ui-tray-footer .red-ui-button.primary").prop("disabled", false);
+          $("button:contains('追加')").prop("disabled", false);
+          $("button:contains('完了')").prop("disabled", false);
+          validationTip.hide();
+        }
+      }
+
+      // Real-time validation
+      $("#node-config-input-name, #node-config-input-obnizId, #node-config-input-accessToken, #node-config-input-deviceType")
+        .on('keyup input change', validate);
+
       this.editor = RED.editor.createEditor({
         id: 'node-input-code-editor',
         mode: 'ace/mode/nrjavascript',
@@ -58,7 +152,10 @@
 
       $("#node-input-autoConnectOnDeploy").typedInput({
         type:'bool'
-      })
+      });
+
+      // Execute initial validation
+      validate();
     },
     oneditsave: function () {
       this.code = this.editor.getValue();
@@ -116,6 +213,10 @@
     <div class="form-row">
         <label for="node-config-input-autoConnectOnDeploy"><i class="fa fa-tag"></i> Auto connect on deploy</label>
         <input type="checkbox" id="node-config-input-autoConnectOnDeploy" placeholder="">
+    </div>
+
+    <div class="form-row">
+        <div id="node-config-validation-tip" class="form-tips" style="display: none; color: #a94442; padding-top: 5px;"></div>
     </div>
 
     <div class="form-row">

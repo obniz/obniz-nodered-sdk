@@ -5,6 +5,17 @@
             "initialize": "初期化処理",
             "finalize": "終了処理",
             "outputs": "出力数"
+        },
+        "validation": {
+            "obnizIdRequired": "obniz ID は必須です！",
+            "obnizIdNoWhitespace": "obniz ID にスペースや改行は含められません。",
+            "obnizIdNoFullWidth": "obniz ID に全角文字は含められません。",
+            "obnizIdFormat": "obniz ID は4桁-4桁の形式で入力してください（例: 1234-5678）。",
+            "obnizIdDuplicate": "この obniz ID は既に使用されています。別のIDを入力してください。",
+            "accessTokenNoWhitespace": "アクセストークンにスペースや改行は含められません。",
+            "accessTokenNoFullWidth": "アクセストークンに全角文字は含められません。",
+            "accessTokenTooShort": "アクセストークンが短すぎます。正しい値を入力してください。",
+            "nameRequired": "名前を入力してください。"
         }
     }
 }
